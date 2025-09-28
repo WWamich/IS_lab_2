@@ -16,21 +16,27 @@ import java.util.List;
 
 @Repository
 public interface HumanRepository extends JpaRepository<Human, Long> {
+    
     @Query("SELECT h FROM Human h WHERE " +
-           "(:name IS NULL OR lower(h.name) LIKE lower(concat('%', :name, '%'))) AND " +
-           "(:soundtrackName IS NULL OR lower(h.soundtrackName) LIKE lower(concat('%', :soundtrackName, '%')))")
+    "(:name IS NULL OR lower(h.name) = lower(:name)) AND " +
+    "(:soundtrackName IS NULL OR lower(h.soundtrackName) = lower(:soundtrackName))")
     Page<Human> findAllWithFilters(@Param("name") String name, @Param("soundtrackName") String soundtrackName, Pageable pageable);
+
     @Transactional
     @Modifying
     void deleteAllByWeaponType(WeaponType weaponType);
     @Query("FROM Human h WHERE h.mood = (SELECT MAX(h2.mood) FROM Human h2 WHERE h2.mood IS NOT NULL)")
+
     List<Human> findTopByMaxMood();
     List<Human> findByMinutesOfWaitingGreaterThan(float minutes);
+
     @Transactional
     @Modifying
     @Query("UPDATE Human h SET h.mood = :mood WHERE h.realHero = true")
+
     void updateAllHeroesMoodToGloom(@Param("mood") Mood mood); 
     @Query("SELECT h FROM Human h WHERE h.realHero = true AND h.car IS NULL")
+
     List<Human> findAllHeroesWithoutCar();
     List<Human> findByNameContainingIgnoreCase(String name);
     List<Human> findBySoundtrackNameContainingIgnoreCase(String soundtrackName);
