@@ -2,19 +2,26 @@ package com.example.service;
 
 import com.example.model.Car;
 import com.example.repository.CarRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class CarService {
 
     @Autowired
     private CarRepository carRepository;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    private void notifyClients() {
+        messagingTemplate.convertAndSend("/topic/humans", "update");
+    }
 
     public List<Car> findAll() {
         return carRepository.findAll();
@@ -25,14 +32,17 @@ public class CarService {
     }
 
     public Car save(Car car) {
-        return carRepository.save(car);
+        Car savedCar = carRepository.save(car);
+        notifyClients();
+        return savedCar;
     }
 
     public void deleteById(Long id) {
         carRepository.deleteById(id);
+        notifyClients();
     }
 
     public List<Car> findByNameContaining(String name) {
-        return carRepository.findByNameContaining(name);
+        return carRepository.findByNameContainingIgnoreCase(name);
     }
 }

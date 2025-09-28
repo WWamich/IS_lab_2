@@ -1,0 +1,90 @@
+body {
+    background-color: #1a0321;
+    color: #f0f0f0 !important;
+}
+.main-icon {
+    width: 40px;  
+    height: 40px;
+    filter: drop-shadow(0 0 5px #ff00ff);
+}
+
+.navbar-icon {
+    width: 28px; 
+    height: 28px;
+    filter: drop-shadow(0 0 5px #00ffff); 
+}
+
+.video-background-wrapper {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -2; overflow: hidden; pointer-events: none;
+}
+.video-background-wrapper::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%;
+    height: 100%; background-color: rgba(26, 3, 33, 0.6); z-index: -1;
+}
+.video-background-wrapper iframe { 
+    position: absolute; top: 50%; left: 50%; width: 100vw; height: 56.25vw;
+    min-width: 177.77vh; min-height: 100vh; transform: translate(-50%, -50%);
+}
+
+.card, .search-form {
+    background-color: rgba(10, 0, 15, 0.5);
+    border: 1px solid #ff00ff;
+    box-shadow: 0 0 10px #ff00ff, inset 0 0 5px rgba(255, 0, 255, 0.5);
+}
+.card-header {
+    background-color: rgba(26, 3, 33, 0.7);
+    border-bottom: 1px solid #ff00ff;
+}
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: rgba(255, 0, 255, 0.05);
+    --bs-table-hover-bg: rgba(0, 255, 255, 0.15);
+}
+
+.table, .table td, .table th, .table span {
+    color: #f0f0f0 !important; 
+    text-shadow: 0 0 5px rgba(0,0,0,0.7), 0 0 7px rgba(0,0,0,0.7); 
+}
+
+
+h1, h4, h5, label {
+    text-shadow: 0 0 5px rgba(0,0,0,0.7), 0 0 7px rgba(0,0,0,0.7);
+}
+
+.table th {
+    background-color: transparent !important;
+}
+
+a {
+    color: #00ffff;
+    text-decoration: none;
+}
+a:hover {
+    color: #ff00ff;
+    text-shadow: 0 0 5px #ff00ff;
+}
+
+.pagination .page-item .page-link {
+    background-color: rgba(26, 3, 33, 0.8);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-color: #ff00ff;
+    color: #00ffff;
+}
+.pagination .page-item.active .page-link {
+    background-color: #ff00ff; border-color: #ff00ff; color: #1a0321;
+    text-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.pagination .page-item.disabled .page-link {
+    background-color: rgba(26, 3, 33, 0.6); border-color: #cc00cc; color: #cccccc;
+}
+
+.navbar {
+    background-color: rgba(10, 0, 15, 0.8) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid #ff00ff;
+    box-shadow: 0 0 10px #ff00ff;
+}

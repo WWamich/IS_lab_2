@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Специальные операции</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+</head>
+<body>
+    <div class="video-background-wrapper">
+        <iframe 
+            src="https://www.youtube.com/embed/xrW4MitN2kw?vq=hd1080&autoplay=1&loop=1&playlist=xrW4MitN2kw&controls=0&rel=0&showinfo=0&mute=1&start=0&end=30"
+            frameborder="0" 
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+        </iframe>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" hx-get="/" hx-target="#content-to-swap" hx-push-url="true" style="cursor: pointer;">
+                <img th:src="@{/images/Drive_2011_Film.svg}" class="navbar-icon" alt="Drive Icon">
+                <span class="ms-2">IS Lab 1</span>
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home"></i> Главная
+                </a>
+                <a class="nav-link" href="/special-operations">
+                    <i class="fas fa-cogs"></i> Специальные операции
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">
+                    <i class="fas fa-cogs"></i> Специальные операции над объектами
+                </h1>
+                <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i>
+                    <span th:if="${param.success[0] == 'deleted'}">Объекты успешно удалены!</span>
+                    <span th:if="${param.success[0] == 'mood-updated'}">Настроение всех героев обновлено на GLOOM!</span>
+                    <span th:if="${param.success[0] == 'car-assigned'}">Все герои без автомобиля получили красную Lada Kalina!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-trash"></i> Удаление по типу оружия
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Удалить все объекты, значение поля weaponType которого эквивалентно заданному.
+                                </p>
+                                <form th:action="@{/special-operations/delete-by-weapon-type}" method="post">
+                                    <div class="mb-3">
+                                        <label for="weaponType" class="form-label">Тип оружия:</label>
+                                        <select class="form-select" id="weaponType" name="weaponType" required>
+                                            <option value="">Выберите тип оружия...</option>
+                                            <option th:each="weaponType : ${weaponTypes}" 
+                                                    th:value="${weaponType}" 
+                                                    th:text="${weaponType}">Тип оружия</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-danger" 
+                                            onclick="return confirm('Вы уверены, что хотите удалить все объекты с выбранным типом оружия?')">
+                                        <i class="fas fa-trash"></i> Удалить
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-search"></i> Поиск максимального настроения
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Вернуть один (любой) объект, значение поля mood которого является максимальным.
+                                </p>
+                                <a href="/special-operations/max-mood" class="btn btn-info">
+                                    <i class="fas fa-search"></i> Найти
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-clock"></i> Поиск по минутам ожидания
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Вернуть массив объектов, значение поля minutesOfWaiting которых больше заданного.
+                                </p>
+                                <form th:action="@{/special-operations/waiting-greater-than}" method="post">
+                                    <div class="mb-3">
+                                        <label for="minutes" class="form-label">Минуты ожидания:</label>
+                                        <input type="number" class="form-control" id="minutes" name="minutes" 
+                                               step="0.1" min="0" placeholder="Введите количество минут" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="fas fa-search"></i> Найти
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-frown"></i> Обновление настроения
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Поменять всем героям настроение на максимально печальное (GLOOM).
+                                </p>
+                                <form th:action="@{/special-operations/update-mood-to-gloom}" method="post">
+                                    <button type="submit" class="btn btn-secondary" 
+                                            onclick="return confirm('Вы уверены, что хотите изменить настроение всех героев на GLOOM?')">
+                                        <i class="fas fa-frown"></i> Обновить настроение
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-4">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-car"></i> Назначение автомобилей
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    Пересадить всех героев, не имеющих автомобиля на красные "Lada Kalina".
+                                </p>
+                                <form th:action="@{/special-operations/assign-red-lada-kalina}" method="post">
+                                    <button type="submit" class="btn btn-primary" 
+                                            onclick="return confirm('Вы уверены, что хотите назначить красную Lada Kalina всем героям без автомобиля?')">
+                                        <i class="fas fa-car"></i> Назначить автомобили
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад к главной странице
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            var socket = new SockJS('/ws'); 
+            var stompClient = Stomp.over(socket);
+    
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe('/topic/humans', function (message) {
+                    location.reload(); 
+                });
+            });
+        });
+    </script>
+</body>
+</html>

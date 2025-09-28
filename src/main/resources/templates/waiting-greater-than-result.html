@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результат поиска по минутам ожидания</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+</head>
+<body>
+    <div class="video-background-wrapper">
+        <iframe 
+            src="https://www.youtube.com/embed/xrW4MitN2kw?vq=hd1080&autoplay=1&loop=1&playlist=xrW4MitN2kw&controls=0&rel=0&showinfo=0&mute=1&start=0&end=30"
+            frameborder="0" 
+            allow="autoplay; encrypted-media"
+            allowfullscreen>
+        </iframe>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" hx-get="/" hx-target="#content-to-swap" hx-push-url="true" style="cursor: pointer;">
+                <img th:src="@{/images/Drive_2011_Film.svg}" class="navbar-icon" alt="Drive Icon">
+                <span class="ms-2">IS Lab 1</span>
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home"></i> Главная
+                </a>
+                <a class="nav-link" href="/special-operations">
+                    <i class="fas fa-cogs"></i> Специальные операции
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h4 class="mb-0">
+                            <i class="fas fa-clock"></i> Результат поиска по минутам ожидания
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> 
+                            Найдены объекты с минутами ожидания больше <strong th:text="${minutes}">0</strong>
+                        </div>
+
+                        <div th:if="${#lists.isEmpty(humanBeings)}">
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i> Объекты с указанными минутами ожидания не найдены.
+                            </div>
+                        </div>
+
+                        <div th:unless="${#lists.isEmpty(humanBeings)}">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Имя</th>
+                                            <th>Минуты ожидания</th>
+                                            <th>Дата создания</th>
+                                            <th>Настоящий герой</th>
+                                            <th>Настроение</th>
+                                            <th>Тип оружия</th>
+                                            <th>Автомобиль</th>
+                                            <th>Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="humanBeing : ${humanBeings}">
+                                            <td th:text="${humanBeing.id}">1</td>
+                                            <td th:text="${humanBeing.name}">Имя</td>
+                                            <td>
+                                                <span class="badge bg-warning" th:text="${humanBeing.minutesOfWaiting}">0.0</span>
+                                            </td>
+                                            <td th:text="${#temporals.format(humanBeing.creationDate, 'dd.MM.yyyy')}">01.01.2023</td>
+                                            <td>
+                                                <span th:if="${humanBeing.realHero}" class="badge bg-success">Да</span>
+                                                <span th:unless="${humanBeing.realHero}" class="badge bg-secondary">Нет</span>
+                                            </td>
+                                            <td>
+                                                <span th:if="${humanBeing.mood}" 
+                                                      th:text="${humanBeing.mood}" 
+                                                      class="badge bg-info">Настроение</span>
+                                                <span th:unless="${humanBeing.mood}" class="badge bg-secondary">Нет</span>
+                                            </td>
+                                            <td>
+                                                <span th:if="${humanBeing.weaponType}" 
+                                                      th:text="${humanBeing.weaponType}" 
+                                                      class="badge bg-danger">Оружие</span>
+                                                <span th:unless="${humanBeing.weaponType}" class="badge bg-secondary">Нет</span>
+                                            </td>
+                                            <td th:text="${humanBeing.car?.name ?: 'Нет'}">Автомобиль</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a th:href="@{/human/{id}(id=${humanBeing.id})}" 
+                                                       class="btn btn-sm btn-outline-primary" title="Просмотр">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a th:href="@{/human/edit/{id}(id=${humanBeing.id})}" 
+                                                       class="btn btn-sm btn-outline-warning" title="Редактировать">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <a href="/special-operations" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Назад к специальным операциям
+                            </a>
+                            <a href="/" class="btn btn-primary">
+                                <i class="fas fa-home"></i> На главную
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            var socket = new SockJS('/ws'); 
+            var stompClient = Stomp.over(socket);
+    
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe('/topic/humans', function (message) {
+                    location.reload(); 
+                });
+            });
+        });
+    </script>
+</body>
+</html>
