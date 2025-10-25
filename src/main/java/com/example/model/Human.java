@@ -56,6 +56,9 @@ public class Human {
     @Column(name = "weapon_type")
     private WeaponType weaponType;
 
+    @Version
+    private Long version;
+
     public Human() {
         this.creationDate = LocalDate.now();
     }
@@ -173,4 +176,7 @@ public class Human {
                 ", weaponType=" + weaponType +
                 '}';
     }
+
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version; }
 }

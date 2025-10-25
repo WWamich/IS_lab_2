@@ -43,4 +43,8 @@ public interface HumanRepository extends JpaRepository<Human, Long> {
     List<Human> findByNameContainingIgnoreCase(String name);
     List<Human> findBySoundtrackNameContainingIgnoreCase(String soundtrackName);
     List<Human> findByWeaponType(WeaponType weaponType);
+
+    boolean existsByNameAndSoundtrackName(String name, String soundtrackName);
+
+    boolean existsByNameAndSoundtrackNameAndIdNot(String name, String soundtrackName, Long id);
 }
