@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Подтверждение сопоставления полей</title>
+  <div th:replace="~{layout :: head}"></div>
+</head>
+<body>
+<div th:replace="~{layout :: video-background}"></div>
+<div th:replace="~{layout :: navbar}"></div>
+
+<div class="container mt-4">
+  <form method="POST" th:action="@{/import/execute}">
+    <input type="hidden" name="tempFileName" th:value="${tempFileName}"/>
+    <div class="card">
+      <div class="card-header bg-info text-white">
+        <h4><i class="fas fa-exchange-alt"></i> Сопоставление полей для файла: <span th:text="${fileName}"></span></h4>
+      </div>
+      <div class="card-body">
+        <p>Пожалуйста, проверьте и при необходимости скорректируйте автоматически определенные поля. Система запомнит ваш выбор для будущих импортов.</p>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+            <tr>
+              <th>Столбец в файле</th>
+              <th>Поле в системе</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="mapping : ${mappings}">
+              <td th:text="${mapping.key}">Название столбца</td>
+              <td>
+                <select class="form-select" th:name="'map.' + ${mapping.key}">
+                  <option value="none">-- Не импортировать --</option>
+                  <option th:each="field : ${targetFields}"
+                          th:value="${field}"
+                          th:text="${field}"
+                          th:selected="${field == mapping.value}"></option>
+                </select>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Начать импорт</button>
+        <a href="/import" class="btn btn-secondary"><i class="fas fa-times"></i> Отмена</a>
+      </div>
+    </div>
+  </form>
+</div>
+<div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

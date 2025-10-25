@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>История импорта</title>
+    <div th:replace="~{layout :: head}"></div>
+</head>
+<body>
+<div th:replace="~{layout :: video-background}"></div>
+<div th:replace="~{layout :: navbar}"></div>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-secondary text-white">
+            <h4><i class="fas fa-history"></i> История операций импорта</h4>
+        </div>
+        <div class="card-body">
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID операции</th>
+                        <th>Время</th>
+                        <th>Статус</th>
+                        <th>Добавлено объектов</th>
+                        <th>Детали ошибки</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(logs)}">
+                        <td colspan="5" class="text-center">История импорта пуста.</td>
+                    </tr>
+                    <tr th:each="log : ${logs}">
+                        <td th:text="${log.id}">1</td>
+                        <td th:text="${#temporals.format(log.importTime, 'dd.MM.yyyy HH:mm:ss')}"></td>
+                        <td>
+                                    <span class="badge"
+                                          th:classappend="${log.status.name() == 'SUCCESS' ? 'bg-success' : (log.status.name() == 'FAILED' ? 'bg-danger' : 'bg-warning')}"
+                                          th:text="${log.status.name()}"></span>
+                        </td>
+                        <td th:text="${log.addedCount}"></td>
+                        <td th:text="${log.errorDetails}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <a href="/import" class="btn btn-primary"><i class="fas fa-plus"></i> Новый импорт</a>
+            <a href="/special-operations" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Назад</a>
+        </div>
+    </div>
+</div>
+<div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>
