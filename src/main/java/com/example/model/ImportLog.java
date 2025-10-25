@@ -15,7 +15,7 @@ public class ImportLog {
     private LocalDateTime importTime;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private ImportStatus status;
 
     @Column(name = "added_count")
@@ -39,4 +39,3 @@ public class ImportLog {
     public String getErrorDetails() { return errorDetails; }
     public void setErrorDetails(String errorDetails) { this.errorDetails = errorDetails; }
 }
-

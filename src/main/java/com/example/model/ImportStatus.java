@@ -1,6 +1,6 @@
 package com.example.model;
 
-enum ImportStatus {
+public enum ImportStatus {
     IN_PROGRESS,
     SUCCESS,
     FAILED
