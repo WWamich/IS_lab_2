@@ -35,8 +35,18 @@ public class HumanService {
     public Optional<Human> findById(Long id) {
         return humanRepository.findById(id);
     }
-    
+
     public Human save(Human human) {
+        if (human.getId() == null) {
+            if (humanRepository.existsByNameAndSoundtrackName(human.getName(), human.getSoundtrackName())) {
+                throw new IllegalArgumentException("Объект с именем '" + human.getName() + "' и саундтреком '" + human.getSoundtrackName() + "' уже существует!");
+            }
+        } else {
+            if (humanRepository.existsByNameAndSoundtrackNameAndIdNot(human.getName(), human.getSoundtrackName(), human.getId())) {
+                throw new IllegalArgumentException("Объект с именем '" + human.getName() + "' и саундтреком '" + human.getSoundtrackName() + "' уже существует!");
+            }
+        }
+
         Human savedHuman = humanRepository.save(human);
         notifyClients();
         return savedHuman;
