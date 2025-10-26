@@ -44,16 +44,18 @@
                         </h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> 
-                            Найдены объекты с минутами ожидания больше <strong th:text="${minutes}">0</strong>
-                        </div>
-
                         <div th:if="${#lists.isEmpty(humanBeings)}">
                             <div class="alert alert-warning">
-                                <i class="fas fa-exclamation-triangle"></i> Объекты с указанными минутами ожидания не найдены.
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Объекты с минутами ожидания больше <strong th:text="${minutes}">0.0</strong> не найдены.
                             </div>
                         </div>
+                        <div th:unless="${#lists.isEmpty(humanBeings)}">
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle"></i>
+                                Найдены объекты с минутами ожидания больше <strong th:text="${minutes}">0.0</strong>:
+                            </div>
+
 
                         <div th:unless="${#lists.isEmpty(humanBeings)}">
                             <div class="table-responsive">

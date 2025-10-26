@@ -11,8 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +38,7 @@ public class HumanService {
         return humanRepository.findById(id);
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Human save(Human human) {
         if (human.getId() == null) {
             if (humanRepository.existsByNameAndSoundtrackName(human.getName(), human.getSoundtrackName())) {

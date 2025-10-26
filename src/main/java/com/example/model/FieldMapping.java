@@ -3,14 +3,17 @@ package com.example.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "field_mapping", uniqueConstraints = @UniqueConstraint(columnNames = "sourceFieldName"))
+@Table(name = "field_mapping",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_field_mapping_source_field_name", columnNames = {"source_field_name"})
+        })
 public class FieldMapping {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "source_field_name", nullable = false, unique = true)
+    @Column(name = "source_field_name", nullable = false)
     private String sourceFieldName;
 
     @Column(name = "target_entity_field", nullable = false)

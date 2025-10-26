@@ -3,7 +3,6 @@ package com.example.service;
 import com.example.model.*;
 import com.example.repository.FieldMappingRepository;
 import com.example.repository.HumanRepository;
-import com.example.repository.ImportLogRepository;
 import com.opencsv.CSVReader;
 import org.apache.commons.text.similarity.JaroWinklerSimilarity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class ImportService {
     @Autowired
     private HumanRepository humanRepository;
     @Autowired
-    private ImportLogRepository importLogRepository;
+    private ImportLogService importLogService;
     @Autowired
     private FieldMappingRepository fieldMappingRepository;
     @Autowired
@@ -54,9 +53,7 @@ public class ImportService {
 
     @Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
     public void importHumansFromCsv(MultipartFile file, Map<String, String> confirmedMappings) throws Exception {
-        ImportLog log = new ImportLog();
-        log.setStatus(ImportStatus.IN_PROGRESS);
-        importLogRepository.saveAndFlush(log);
+        ImportLog log = importLogService.createNewLog();
 
         try {
             saveNewMappings(confirmedMappings);
@@ -78,14 +75,10 @@ public class ImportService {
             humanRepository.saveAll(humansToSave);
             messagingTemplate.convertAndSend("/topic/humans", "update");
 
-            log.setStatus(ImportStatus.SUCCESS);
-            log.setAddedCount(humansToSave.size());
-            importLogRepository.save(log);
+            importLogService.markAsSuccess(log.getId(), humansToSave.size());
 
         } catch (Exception e) {
-            log.setStatus(ImportStatus.FAILED);
-            log.setErrorDetails(e.getMessage().length() > 1024 ? e.getMessage().substring(0, 1024) : e.getMessage());
-            importLogRepository.save(log);
+            importLogService.markAsFailed(log.getId(), e.getMessage());
             throw e;
         }
     }
@@ -208,4 +201,5 @@ public class ImportService {
             }
         }
     }
+
 }

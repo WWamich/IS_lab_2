@@ -37,10 +37,10 @@ public class ImportController {
     }
 
     @PostMapping("/upload")
-    public String uploadFileAndSuggestMapping(@RequestParam("file") MultipartFile file, RedirectAttributes attributes, Model model) {
+    public String uploadFileAndRedirect(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
         if (file.isEmpty()) {
-            model.addAttribute("error", "Пожалуйста, выберите файл для загрузки.");
-            return "import-form";
+            attributes.addFlashAttribute("error", "Пожалуйста, выберите файл для загрузки.");
+            return "redirect:/import";
         }
 
         try {
@@ -48,17 +48,38 @@ public class ImportController {
             Path path = Paths.get(UPLOAD_DIR, tempFileName);
             Files.write(path, file.getBytes());
 
-            Map<String, String> suggestedMappings = importService.suggestMappings(file);
+            attributes.addFlashAttribute("tempFileName", tempFileName);
+            attributes.addFlashAttribute("originalFileName", file.getOriginalFilename());
+            return "redirect:/import/mapping";
+
+        } catch (IOException e) {
+            attributes.addFlashAttribute("error", "Не удалось сохранить временный файл: " + e.getMessage());
+            return "redirect:/import";
+        }
+    }
+    @GetMapping("/mapping")
+    public String showMappingPage(Model model) {
+        if (!model.containsAttribute("tempFileName")) {
+            return "redirect:/import";
+        }
+
+        String tempFileName = (String) model.asMap().get("tempFileName");
+        String originalFileName = (String) model.asMap().get("originalFileName");
+        File tempFile = new File(UPLOAD_DIR, tempFileName);
+
+        try {
+            MultipartFile multipartFile = new MockMultipartFile(tempFileName, Files.readAllBytes(tempFile.toPath()));
+            Map<String, String> suggestedMappings = importService.suggestMappings(multipartFile);
 
             model.addAttribute("mappings", suggestedMappings);
-            model.addAttribute("fileName", file.getOriginalFilename());
-            model.addAttribute("tempFileName", tempFileName);
             model.addAttribute("targetFields", importService.getTargetFields());
+            model.addAttribute("tempFileName", tempFileName);
+            model.addAttribute("fileName", originalFileName);
 
             return "confirm-mapping";
 
         } catch (Exception e) {
-            model.addAttribute("error", "Ошибка при обработке файла: " + e.getMessage());
+            model.addAttribute("error", "Ошибка при анализе файла: " + e.getMessage());
             return "import-form";
         }
     }
@@ -77,9 +98,7 @@ public class ImportController {
         try {
             Path path = Paths.get(tempFile.getAbsolutePath());
             byte[] fileBytes = Files.readAllBytes(path);
-
             MultipartFile multipartFile = new MockMultipartFile(tempFileName, fileBytes);
-
             Map<String, String> confirmedMappings = mappings.entrySet().stream()
                     .filter(e -> e.getKey().startsWith("map."))
                     .collect(java.util.stream.Collectors.toMap(
@@ -88,16 +107,25 @@ public class ImportController {
                     ));
 
             importService.importHumansFromCsv(multipartFile, confirmedMappings);
-            attributes.addFlashAttribute("success", "Импорт успешно запущен и поставлен в очередь на обработку.");
+            attributes.addFlashAttribute("success", "Импорт успешно завершен!");
+            return "redirect:/import/history";
 
         } catch (Exception e) {
             attributes.addFlashAttribute("error", "Ошибка импорта: " + e.getMessage());
-        } finally {
-            tempFile.delete();
-        }
+            return "redirect:/import/history";
 
-        return "redirect:/import/history";
+        } finally {
+            try {
+                if (tempFile != null && tempFile.exists()) {
+                    Files.deleteIfExists(tempFile.toPath());
+                }
+            } catch (IOException e) {
+                System.err.println("Не удалось удалить временный файл: " + tempFile.getAbsolutePath());
+                e.printStackTrace();
+            }
+        }
     }
+
 
     @GetMapping("/history")
     public String showHistory(Model model) {
