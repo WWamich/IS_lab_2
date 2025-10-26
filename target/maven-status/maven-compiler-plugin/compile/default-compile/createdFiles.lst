@@ -1,3 +1,5 @@
+com\example\service\ImportService$FieldMatch.class
+com\example\service\ImportService$LearnedMapping.class
 com\example\Application.class
 com\example\model\Car.class
 com\example\model\Human.class
