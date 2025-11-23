@@ -6,4 +6,5 @@ services:
     container_name: is_lab_app2
     ports:
       - "8080:8080"
+
     restart: unless-stopped

@@ -14,6 +14,7 @@ com\example\controller\ImportController$MockMultipartFile.class
 com\example\model\Mood.class
 com\example\model\Coordinates.class
 com\example\service\CarService.class
+com\example\controller\HumanController$1.class
 com\example\repository\CarRepository.class
 com\example\exception\GlobalExceptionHandler.class
 com\example\service\ImportLogService.class

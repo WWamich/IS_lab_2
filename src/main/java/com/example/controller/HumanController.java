@@ -7,6 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.service.ImportService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.Map;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -19,6 +25,9 @@ public class HumanController {
 
     @Autowired
     private HumanService humanService;
+
+    @Autowired
+    private ImportService importService;
 
     @GetMapping
     public ResponseEntity<List<Human>> getAllHumans(
@@ -118,5 +127,24 @@ public class HumanController {
     public ResponseEntity<Void> updateAllHeroesWithoutCarToRedLadaKalina() {
         humanService.updateAllHeroesWithoutCarToRedLadaKalina();
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> importHumans(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("mappings") String mappingsJson) {
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, String> mappings = objectMapper.readValue(mappingsJson,
+                    new TypeReference<Map<String, String>>() {});
+
+            importService.importHumansFromCsv(file, mappings);
+            return ResponseEntity.ok("Импорт выполнен успешно");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка импорта: " + e.getMessage());
+        }
     }
 }

@@ -77,8 +77,7 @@ public class HumanService {
         humanRepository.updateAllHeroesMoodToGloom(Mood.GLOOM);
         notifyClients(); 
     }
-    
-    @Transactional
+
     public void updateAllHeroesWithoutCarToRedLadaKalina() {
         Car redLada = new Car("Lada Kalina", false);
         List<Human> heroesWithoutCar = humanRepository.findAllHeroesWithoutCar();
